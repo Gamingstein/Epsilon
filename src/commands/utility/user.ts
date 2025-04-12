@@ -5,8 +5,7 @@ export const data = new SlashCommandBuilder()
   .setDescription("Replies with User Info!");
 
 export async function execute(interaction: ChatInputCommandInteraction) {
-  console.log(interaction.member);
   await interaction.reply(
-    `This command was run by ${interaction.user.username}.`,
+    `This command was run by ${interaction.user.username}, joined at ${new Date(interaction.user.createdAt).toLocaleString()}.`,
   );
 }
