@@ -9,7 +9,11 @@ import {
 import fs from "node:fs";
 import path from "node:path";
 import { token } from "./config.json";
-import getAIResponse from "./utility/google-api";
+import {
+  createContext,
+  deleteContext,
+  getAIResponse,
+} from "./utility/google-api";
 
 interface Command {
   data: {
@@ -36,6 +40,7 @@ const client = new Client({
 client.commands = new Collection();
 const foldersPath = path.join(__dirname, "commands");
 const commandFolders = fs.readdirSync(foldersPath);
+const context: string[] = [];
 
 for (const folder of commandFolders) {
   const commandsPath = path.join(foldersPath, folder);
@@ -60,7 +65,7 @@ for (const folder of commandFolders) {
   }
 }
 
-client.once(Events.ClientReady, (readyClient) => {
+client.once(Events.ClientReady, async (readyClient) => {
   console.log(`Ready! Logged in as ${readyClient.user.tag}`);
 });
 
@@ -94,11 +99,30 @@ client.on(Events.InteractionCreate, async (interaction) => {
 client.on(Events.MessageCreate, async (message) => {
   if (message.author.bot) return;
   if (!message.mentions.users.has(client.user?.id ?? "")) return;
-
   const userMessage = message.content.replace(/<@!?(\d+)>/, "").trim();
-  const botResponse = await getAIResponse(userMessage, message.author.username);
+  if (context.length === 0) {
+    createContext().then(async (ctx) => {
+      context.push(ctx.name!);
+      const botResponse = await getAIResponse(
+        userMessage,
+        message.author.username,
+        ctx.name!,
+      );
+      message.reply({ content: botResponse });
+    });
+    return;
+  }
 
-  message.reply({ content: botResponse });
+  getAIResponse(userMessage, message.author.username, context[0]).then(
+    async (botResponse) => {
+      message.reply({ content: botResponse });
+      if (userMessage.toLowerCase().includes("bye")) {
+        await deleteContext();
+        context.pop();
+        console.log("Context Deleted!");
+      }
+    },
+  );
 });
 
 client.login(token);
