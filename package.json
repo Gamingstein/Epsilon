@@ -26,6 +26,7 @@
     "typescript-eslint": "^8.29.1"
   },
   "dependencies": {
+    "@google/genai": "^0.8.0",
     "discord.js": "^14.18.0"
   }
 }
