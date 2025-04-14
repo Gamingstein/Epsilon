@@ -14,6 +14,7 @@ import {
   deleteContext,
   getAIResponse,
 } from "./utility/google-api";
+import { activityResolver, randomActivity } from "./utility/random-activity";
 
 interface Command {
   data: {
@@ -67,9 +68,11 @@ for (const folder of commandFolders) {
 
 client.once(Events.ClientReady, async (readyClient) => {
   console.log(`Ready! Logged in as ${readyClient.user.tag}`);
+  client.user?.setActivity(randomActivity());
 });
 
 client.on(Events.InteractionCreate, async (interaction) => {
+  //slash commands
   if (!interaction.isChatInputCommand()) return;
   const command = interaction.client.commands.get(interaction.commandName);
 
@@ -97,15 +100,17 @@ client.on(Events.InteractionCreate, async (interaction) => {
 });
 
 client.on(Events.MessageCreate, async (message) => {
+  //mentions
   if (message.author.bot) return;
   if (!message.mentions.users.has(client.user?.id ?? "")) return;
   const userMessage = message.content.replace(/<@!?(\d+)>/, "").trim();
+  const currentActivity = client.user?.presence.activities[0];
   if (context.length === 0) {
-    createContext().then(async (ctx) => {
+    createContext(activityResolver(currentActivity!)).then(async (ctx) => {
       context.push(ctx.name!);
       const botResponse = await getAIResponse(
         userMessage,
-        message.author.username,
+        message.author.globalName ?? message.author.username,
         ctx.name!,
       );
       message.reply({ content: botResponse });
@@ -113,16 +118,18 @@ client.on(Events.MessageCreate, async (message) => {
     return;
   }
 
-  getAIResponse(userMessage, message.author.username, context[0]).then(
-    async (botResponse) => {
-      message.reply({ content: botResponse });
-      if (userMessage.toLowerCase().includes("bye")) {
-        await deleteContext();
-        context.pop();
-        console.log("Context Deleted!");
-      }
-    },
-  );
+  getAIResponse(
+    userMessage,
+    message.author.globalName ?? message.author.username,
+    context[0],
+  ).then(async (botResponse) => {
+    message.reply({ content: botResponse });
+    if (userMessage.toLowerCase().includes("bye")) {
+      await deleteContext();
+      context.pop();
+      console.log("Context Deleted!");
+    }
+  });
 });
 
 client.login(token);
