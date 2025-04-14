@@ -1,4 +1,8 @@
-import { ChatInputCommandInteraction, SlashCommandBuilder } from "discord.js";
+import {
+  ChatInputCommandInteraction,
+  MessageFlags,
+  SlashCommandBuilder,
+} from "discord.js";
 
 const getRandomGif = () => {
   const gifs = [
@@ -63,5 +67,6 @@ export async function execute(interaction: ChatInputCommandInteraction) {
     embeds: [embed],
     content:
       "🌟 The bot has successfully launched and is now online! 🚀 Get ready to explore a world of endless possibilities and let the digital adventure begin. Whether you need assistance, entertainment, or just a friendly companion, the bot is here to make your experience extraordinary. Let's conquer the digital realm together! 🌐",
+    flags: MessageFlags.Ephemeral,
   });
 }
