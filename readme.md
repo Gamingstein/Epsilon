@@ -124,5 +124,3 @@ Yes! Once working locally, you can deploy it on platforms like Heroku, Fly.io, o
 ## ✨ Final Thoughts
 
 Epsilon is not just a bot — it's a canvas for digital expression. Designed for developers who want full control over _what a chatbot can be_, this project gives you the architecture and creative freedom to build truly unique Discord experiences.
-
----
