@@ -17,11 +17,9 @@ async function handleChat(
       const chat = createChat(activityResolver(currentActivity!));
       chatSession.push(chat);
       const botResponse = await chat.sendMessage({
-        message: userMessage,
+        message: `Now, You are chatting with "${message.author.username}" and they messaged you: ${userMessage}`,
       });
-      message.reply({
-        content: `${message.author.username} says "${botResponse.text}"`,
-      });
+      message.reply({ content: botResponse.text });
     } catch (error) {
       console.error("Error creating context or getting AI response:", error);
     }
@@ -29,7 +27,7 @@ async function handleChat(
   }
   try {
     const botResponse = await chatSession[0].sendMessage({
-      message: userMessage,
+      message: `Now, You are chatting with "${message.author.username}" and they messaged you: ${userMessage}`,
     });
     message.reply({ content: botResponse.text });
   } catch (error) {

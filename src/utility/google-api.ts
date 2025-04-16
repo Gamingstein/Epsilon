@@ -4,7 +4,7 @@ import { generateInstruction } from "./personality";
 
 const ai = new GoogleGenAI({ apiKey: googleAPIKey });
 
-const model = "gemini-1.5-flash-002";
+const model = "gemini-2.0-flash";
 
 const createContext = async (activity: string) => {
   const instruction = generateInstruction(activity);
@@ -56,6 +56,8 @@ const createChat = (activity: string) => {
     model: model,
     config: {
       systemInstruction: instruction,
+      temperature: 1.3,
+      tools: [{ googleSearch: {} }],
     },
   });
   return chat;
