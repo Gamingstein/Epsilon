@@ -1,3 +1,9 @@
+<div align="center">
+  <picture>
+    <source media="(min-width: 768px)" srcset="/../main/assets/bot.jpeg">
+    <img src="/../main/assets/bot.jpeg" align="center" style="width: 100%" />
+  </picture>
+</div>
 # 🧠 Epsilon – The Existential Discord Bot
 
 > _"Born from the pursuit of perfection, Epsilon doesn't just respond — it reflects. It questions, adapts, and evolves. A digital shadow that speaks with intention, humor, and eerie clarity."_
